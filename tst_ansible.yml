@@ -1,0 +1,28 @@
+---
+# Testing Ansible on NTTD Project
+
+- name: Cisco Switch Erfurt
+  hosts: switch-erfurt
+  gather_facts: false
+  connection: local
+  
+  vars:
+  cli:
+    username: admin
+    password: cisco
+  
+  tasks:
+    - name: VLANs configuration
+        ios_config:
+        provider: "{{cli}}"
+        lines:
+            -"vlan 5"
+                -"name FW-MGMT"
+            -"vlan 6"
+                -"name Router-MGMT"
+            -"vlan 7"
+                -"name Switch-MGMT"
+                
+        register: print_output
+    - debug: var=print_output
+---
