@@ -1,0 +1,27 @@
+---
+- name: GETTING ROUTES
+  hosts: ios
+  connection: network_cli
+
+  tasks:
+  - name: Print Facts
+    debug:
+      msg: "{{ ansible_net_hostname }}"
+
+  - name: Run show ip route summary and show ip route bgp
+    ansible.utils.cli_parse: #cisco.ios.ios_command:
+      command: "show ip route bgp"
+      parser:
+        name: ansible.netcommon.pyats
+      set_fact: routes
+    register: result
+
+  #- name: Display result to terminal window
+  #  debug:
+  #    var: result.stdout_lines
+
+  - debug:
+      var: result.stdout_lines
+
+  - name: Save output to a file
+    copy: content="{{ result.stdout_lines[0] }}" dest="/home/samurai/Documents/nttd/sh_routes/{{ inventory_hostname }}"

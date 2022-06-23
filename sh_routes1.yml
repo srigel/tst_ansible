@@ -1,0 +1,31 @@
+---
+- name: GETTING ROUTES
+  hosts: ios
+  connection: network_cli
+
+  tasks:
+  - name: Print Facts
+    debug:
+      msg: "{{ ansible_net_hostname }}"
+
+  - name: Run show ip route summary command
+    ansible.utils.cli_parse:
+      command: "show ip route summary"
+      parser:
+        name: ansible.netcommon.pyats
+        os: ios
+    register: parser_output_summary
+
+  - name: Save output to a file (SUMMARY)
+    copy: content="{{ parser_output_summary.stdout }}" dest="/home/samurai/Documents/nttd/sh_routes/{{ inventory_hostname }}_sh_ip_route_summary"
+
+  - name: Run show ip route bgp command
+    ansible.utils.cli_parse:
+      command: "show ip route bgp"
+      parser:
+        name: ansible.netcommon.pyats
+        os: ios
+    register: parser_output_bgp
+
+  - name: Save output to a file (BGP)
+    copy: content="{{ parser_output_bgp.stdout }}" dest="/home/samurai/Documents/nttd/sh_routes/{{ inventory_hostname }}_sh_ip_route_bgp"
